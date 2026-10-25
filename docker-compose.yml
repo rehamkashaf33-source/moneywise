@@ -1,0 +1,22 @@
+# docker compose up --build   ->  API on :5000, MongoDB on :27017
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes: [mongo-data:/data/db]
+    ports: ["27017:27017"]
+  api:
+    build: ./backend
+    restart: unless-stopped
+    depends_on: [mongo]
+    ports: ["5000:5000"]
+    environment:
+      MONGO_URI: mongodb://mongo:27017/expense_tracker
+      JWT_SECRET: change-me
+      JWT_REFRESH_SECRET: change-me-too
+      CLIENT_URL: http://localhost:5173
+      NODE_ENV: development
+    volumes: [uploads:/app/uploads]
+volumes:
+  mongo-data:
+  uploads:
